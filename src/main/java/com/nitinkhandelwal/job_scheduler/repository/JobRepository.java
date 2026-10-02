@@ -29,4 +29,8 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             WHERE id = :jobId
             """, nativeQuery = true)
     int markJobAsRunning(@Param("jobId") Long jobId, @Param("workerId") String workerId);
+
+    @Modifying
+    @Query(value = "UPDATE jobs SET last_heartbeat = NOW() WHERE id = :jobId", nativeQuery = true)
+    void updateHeartbeat(@Param("jobId") Long jobId);
 }

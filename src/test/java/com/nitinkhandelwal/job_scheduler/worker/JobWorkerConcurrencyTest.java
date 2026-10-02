@@ -19,8 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 class JobWorkerConcurrencyTest {
 
+//    @Autowired
+//    private JobClaimService jobClaimService;   // instead of JobWorker
+//
+//    Long claimedId = jobClaimService.claimNextJob("test-worker-" + Thread.currentThread().threadId());
+
     @Autowired
-    private JobWorker jobWorker;
+    private JobClaimService jobClaimService;
 
     @Autowired
     private JobRepository jobRepository;
@@ -47,7 +52,7 @@ class JobWorkerConcurrencyTest {
                 readyLatch.countDown();
                 try {
                     startLatch.await();
-                    Long claimedId = jobWorker.claimAndProcess();
+                    Long claimedId = jobClaimService.claimNextJob("test-worker-" + Thread.currentThread().threadId());
                     if (saved.getId().equals(claimedId)) {
                         successCount.incrementAndGet();
                     }
